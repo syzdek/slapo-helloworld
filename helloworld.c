@@ -114,6 +114,11 @@ hello_count_entry_attr(
 
 
 static int
+hello_count_tally(
+		helloworld_cnt_t *			cnt );
+
+
+static int
 hello_db_destroy(
 		BackendDB *					be,
 		ConfigReply *				cr );
@@ -393,6 +398,24 @@ hello_count_entry_attr(
 		return(0);
 	*iptr += (int)a->a_numvals;
 	return(0);
+}
+
+
+int
+hello_count_tally(
+		helloworld_cnt_t *			cnt )
+{
+	int tally;
+	tally = 0;
+	tally += (int)cnt->c_grandparent;
+	tally += (int)cnt->c_parent;
+	tally += (int)cnt->c_sibling;
+	tally += (int)cnt->c_spouse;
+	tally += (int)cnt->c_child;
+	tally += (int)cnt->c_grandchild;
+	tally += (int)cnt->c_godparent;
+	tally += (int)cnt->c_godchild;
+	return(tally);
 }
 
 
