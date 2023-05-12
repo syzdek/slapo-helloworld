@@ -1,0 +1,222 @@
+#
+#   OpenLDAP pwdPolicy/shadowAccount Overlay
+#   Copyright (c) 2023 David M. Syzdek <david@syzdek.net>
+#   All rights reserved.
+#
+#   Dominus vobiscum. Et cum spiritu tuo.
+#
+#   Redistribution and use in source and binary forms, with or without
+#   modification, are permitted only as authorized by the OpenLDAP
+#   Public License.
+#
+#   A copy of this license is available in the file LICENSE in the
+#   top-level directory of the distribution or, alternatively, at
+#   <http://www.OpenLDAP.org/license.html>.
+#
+#   Data for maintainer's test environment.
+#
+
+dn: dc=example,dc=com
+objectClass: top
+objectClass: domain
+dc: example
+
+dn: ou=People,dc=example,dc=com
+objectClass: top
+objectClass: organizationalUnit
+ou: People
+description: LDAP entries for individual users
+
+dn: uid=root,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+uid: root
+cn: Root User
+sn: Root
+givenName: Root
+
+dn: uid=rcrawley,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: helloFamily
+uid: rcrawley
+cn: Robert Crawley
+givenName: Robert
+sn: Crawley
+helloParent: Violet Crawley
+helloParent: Patrick Crawley
+helloSpouse: Cora Crawley
+helloChild: Mary Talbot
+helloChild: Edith Pelham
+helloChild: Sybil Branson
+helloGrandchild: George Crawley
+helloGrandchild: Caroline Talbot
+helloGrandchild: Marigold Crawley
+helloGrandchild: Sybil Branson
+
+dn: uid=ccrawley,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: helloFamily
+uid: ccrawley
+cn: Cora Crawley
+givenName: Cora
+sn: Crawley
+helloParent: Isidore Levinson
+helloParent: Martha Levinson
+helloSpouse: Robert Crawley
+helloChild: Mary Talbot
+helloChild: Edith Pelham
+helloChild: Sybil Branson
+helloGrandchild: George Crawley
+helloGrandchild: Caroline Talbot
+helloGrandchild: Marigold Crawley
+helloGrandchild: Sybil Branson
+
+dn: uid=mtalbot,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: helloFamily
+uid: mtalbot
+cn: Mary Talbot
+givenName: Mary
+sn: Talbot
+helloGrandparent: Violet Crawley
+helloGrandparent: Patrick Crawley
+helloGrandparent: Isidore Levinson
+helloGrandparent: Martha Levinson
+helloParent: Robert Crawley
+helloParent: Cora Crawley
+helloSpouse: Henry Talbot
+helloChild: George Crawley
+helloChild: Caroline Talbot
+
+dn: uid=gcrawley,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: helloFamily
+uid: gcrawley
+cn: George Crawley
+givenName: George
+sn: Crawley
+helloGrandparent: Reginald Crawley
+helloGrandparent: Isobel Grey
+helloGrandparent: Robert Crawley
+helloGrandparent: Cora Crawley
+helloParent: Mary Talbot
+helloParent: Matthew Crawley
+
+dn: uid=ctalbot,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: helloFamily
+uid: ctalbot
+cn: Caroline Talbot
+givenName: Caroline
+sn: Talbot
+helloGrandparent: Robert Crawley
+helloGrandparent: Cora Crawley
+helloParent: Mary Talbot
+helloParent: Henry Talbot
+
+dn: uid=epelham,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: helloFamily
+uid: epelham
+cn: Edith Pelham
+givenName: Edith
+sn: Pelham
+helloGrandparent: Violet Crawley
+helloGrandparent: Patrick Crawley
+helloGrandparent: Isidore Levinson
+helloGrandparent: Martha Levinson
+helloParent: Robert Crawley
+helloParent: Cora Crawley
+helloSpouse: Herbert Pelham
+helloChild: Marigold Crawley
+
+dn: uid=mcrawley,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: helloFamily
+uid: mcrawley
+cn: Marigold Crawley
+givenName: Marigold
+sn: Crawley
+helloGrandparent: Robert Crawley
+helloGrandparent: Cora Crawley
+helloParent: Edith Pelham
+helloParent: Michael Gregson
+
+dn: uid=sbranson,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: helloFamily
+uid: sbranson
+cn: Sybil Branson
+givenName: Sybil
+sn: Branson
+helloGrandparent: Violet Crawley
+helloGrandparent: Patrick Crawley
+helloGrandparent: Isidore Levinson
+helloGrandparent: Martha Levinson
+helloParent: Robert Crawley
+helloParent: Cora Crawley
+helloSpouse: Tom Branson
+helloChild: Sybil Branson
+
+dn: uid=sbranson1,ou=People,dc=example,dc=com
+objectClass: top
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: helloFamily
+uid: sbranson1
+displayName: Sybbie Branson
+cn: Sybil Branson
+givenName: Sybil
+sn: Branson
+helloGrandparent: Robert Crawley
+helloGrandparent: Cora Crawley
+helloParent: Sybil Branson
+helloParent: Tom Branson
+
+dn: ou=Groups,dc=example,dc=com
+ou: Groups
+objectClass: organizationalUnit
+description: LDAP groups for LDAP users
+
+dn: cn=crawleyfamily,ou=Groups,dc=example,dc=com
+objectClass: top
+objectClass: groupOfNames
+cn: crawleyfamily
+description: The Crawley Family
+member: uid=rcrawley,ou=People,dc=example,dc=com
+member: uid=ccrawley,ou=People,dc=example,dc=com
+member: uid=mtalbot,ou=People,dc=example,dc=com
+member: uid=gcrawley,ou=People,dc=example,dc=com
+member: uid=ctalbot,ou=People,dc=example,dc=com
+member: uid=epelham,ou=People,dc=example,dc=com
+member: uid=mcrawley,ou=People,dc=example,dc=com
+member: uid=sbranson,ou=People,dc=example,dc=com
+member: uid=sbranson1,ou=People,dc=example,dc=com
+
