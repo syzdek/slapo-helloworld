@@ -54,6 +54,7 @@
 
 typedef struct helloworld_cnt_t
 {
+	int							c_total;
 	int							c_grandparent;
 	int							c_parent;
 	int							c_sibling;
