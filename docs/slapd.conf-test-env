@@ -1,0 +1,76 @@
+#
+#   OpenLDAP pwdPolicy/shadowAccount Overlay
+#   Copyright (c) 2023 David M. Syzdek <david@syzdek.net>
+#   All rights reserved.
+#
+#   Dominus vobiscum. Et cum spiritu tuo.
+#
+#   Redistribution and use in source and binary forms, with or without
+#   modification, are permitted only as authorized by the OpenLDAP
+#   Public License.
+#
+#   A copy of this license is available in the file LICENSE in the
+#   top-level directory of the distribution or, alternatively, at
+#   <http://www.OpenLDAP.org/license.html>.
+#
+#   Slapd configuration file for running slapd in maintainer's test
+#   environment.  Use test-env.sh to start the daemon.
+#
+
+# daemon options
+pidfile		/tmp/slapo-helloworld/var/run/slapd.pid
+argsfile	/tmp/slapo-helloworld/var/run/slapd.args
+
+# schema
+include		/tmp/slapo-helloworld/etc/openldap/schema/core.schema
+include		/tmp/slapo-helloworld/etc/openldap/schema/cosine.schema
+include		/tmp/slapo-helloworld/etc/openldap/schema/inetorgperson.schema
+include		/tmp/slapo-helloworld/etc/openldap/schema/java.schema
+include		/tmp/slapo-helloworld/etc/openldap/schema/nis.schema
+include		/tmp/slapo-helloworld/etc/openldap/schema/misc.schema
+
+# load modules
+modulepath	/tmp/slapo-helloworld/libexec/openldap
+moduleload	accesslog.la
+moduleload	back_mdb.la
+moduleload	back_null.la
+moduleload	helloworld.la
+
+# password options
+password-hash               {CRYPT} {SSHA} {SMD5} {CLEARTEXT} 
+password-crypt-salt-format  "$6$%.16s"
+
+# access lists
+access to dn.base="cn=config"
+	by users			read stop
+	by * none stop
+access to dn.base="cn=Monitor"
+	by users			manage stop
+	by * none stop
+access to *
+	by users			manage stop
+	by sockname.regex=PATH=.*	read stop
+	by peername.ip=127.0.0.1	read stop
+	by peername.ipv6=::1		read stop
+	by * none stop
+
+# database cn=config
+database		config
+
+# database: dc=example,dc=com
+database		mdb
+suffix			"dc=example,dc=com"
+maxsize			1073741824
+rootdn			"cn=Manager,dc=example,dc=com"
+rootpw			"drowssap"
+directory		/tmp/slapo-helloworld/var/openldap-data
+overlay			helloworld
+hello_count_family	on
+index	default		eq,pres
+index	objectClass	eq
+index	uid		eq,pres,sub
+
+# Monitoring suffix (cn=monitor)
+database		monitor
+
+# end of slapd.conf
