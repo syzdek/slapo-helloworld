@@ -21,6 +21,9 @@
 //  Headers  //
 //           //
 ///////////////
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Headers
+#endif
 
 #include <ldap.h>
 #include "slap.h"
@@ -35,6 +38,9 @@
 //  Definitions  //
 //               //
 ///////////////////
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Definitions
+#endif
 
 
 /////////////////
@@ -42,6 +48,9 @@
 //  Datatypes  //
 //             //
 /////////////////
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Datatypes
+#endif
 
 typedef struct helloworld_at_t
 {
@@ -68,6 +77,9 @@ typedef struct helloworld_t
 //  Prototypes  //
 //              //
 //////////////////
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Prototypes
+#endif
 
 //static int
 //hello_cfg_gen(
@@ -120,6 +132,9 @@ init_module(
 //  Variables  //
 //             //
 /////////////////
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Variables
+#endif
 
 static slap_overinst				helloworld;
 
@@ -318,6 +333,9 @@ static ConfigOCs hello_cfg_ocs[] =
 //  Functions  //
 //             //
 /////////////////
+#ifndef SLAPD_OVER_HELLOWORLD
+#	pragma mark - Functions
+#endif
 
 int
 hello_db_destroy(
