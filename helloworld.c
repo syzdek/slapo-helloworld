@@ -124,7 +124,7 @@ hello_get_entry_counts(
 
 
 static int
-hello_get_entry_counts_attr(
+hello_count_entry_attr(
 		Entry *						e,
 		int *						iptr,
 		AttributeDescription *		ad );
@@ -420,20 +420,21 @@ hello_get_entry_counts(
 		Entry *						e,
 		helloworld_cnt_t *			cnt )
 {
-	hello_get_entry_counts_attr(e, &cnt->c_grandparent,	ad_helloGrandparent);
-	hello_get_entry_counts_attr(e, &cnt->c_parent,		ad_helloParent);
-	hello_get_entry_counts_attr(e, &cnt->c_sibling,		ad_helloSibling);
-	hello_get_entry_counts_attr(e, &cnt->c_spouse,		ad_helloSpouse);
-	hello_get_entry_counts_attr(e, &cnt->c_child,		ad_helloChild);
-	hello_get_entry_counts_attr(e, &cnt->c_grandchild,	ad_helloGrandchild);
-	hello_get_entry_counts_attr(e, &cnt->c_godparent,	ad_helloGodparent);
-	hello_get_entry_counts_attr(e, &cnt->c_godchild,	ad_helloGodchild);
+	hello_count_entry_attr(e, &cnt->c_total,		ad_helloFamilySize);
+	hello_count_entry_attr(e, &cnt->c_grandparent,	ad_helloGrandparent);
+	hello_count_entry_attr(e, &cnt->c_parent,		ad_helloParent);
+	hello_count_entry_attr(e, &cnt->c_sibling,		ad_helloSibling);
+	hello_count_entry_attr(e, &cnt->c_spouse,		ad_helloSpouse);
+	hello_count_entry_attr(e, &cnt->c_child,		ad_helloChild);
+	hello_count_entry_attr(e, &cnt->c_grandchild,	ad_helloGrandchild);
+	hello_count_entry_attr(e, &cnt->c_godparent,	ad_helloGodparent);
+	hello_count_entry_attr(e, &cnt->c_godchild,		ad_helloGodchild);
 	return(0);
 }
 
 
 int
-hello_get_entry_counts_attr(
+hello_count_entry_attr(
 		Entry *						e,
 		int *						iptr,
 		AttributeDescription *		ad )
