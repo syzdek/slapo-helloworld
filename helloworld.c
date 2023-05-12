@@ -101,6 +101,13 @@ typedef struct helloworld_t
 
 
 static int
+hello_count_entry_attr(
+		Entry *						e,
+		int *						iptr,
+		AttributeDescription *		ad );
+
+
+static int
 hello_db_destroy(
 		BackendDB *					be,
 		ConfigReply *				cr );
@@ -122,13 +129,6 @@ static int
 hello_get_entry_counts(
 		Entry *						e,
 		helloworld_cnt_t *			cnt );
-
-
-static int
-hello_count_entry_attr(
-		Entry *						e,
-		int *						iptr,
-		AttributeDescription *		ad );
 
 
 //static int
@@ -365,6 +365,20 @@ static ConfigOCs hello_cfg_ocs[] =
 #endif
 
 int
+hello_count_entry_attr(
+		Entry *						e,
+		int *						iptr,
+		AttributeDescription *		ad )
+{
+	Attribute * a;
+	if ((a = attr_find(e->e_attrs, ad)) == NULL)
+		return(0);
+	*iptr += (int)a->a_numvals;
+	return(0);
+}
+
+
+int
 hello_db_destroy(
 		BackendDB *					be,
 		ConfigReply *				cr )
@@ -430,20 +444,6 @@ hello_get_entry_counts(
 	hello_count_entry_attr(e, &cnt->c_grandchild,	ad_helloGrandchild);
 	hello_count_entry_attr(e, &cnt->c_godparent,	ad_helloGodparent);
 	hello_count_entry_attr(e, &cnt->c_godchild,		ad_helloGodchild);
-	return(0);
-}
-
-
-int
-hello_count_entry_attr(
-		Entry *						e,
-		int *						iptr,
-		AttributeDescription *		ad )
-{
-	Attribute * a;
-	if ((a = attr_find(e->e_attrs, ad)) == NULL)
-		return(0);
-	*iptr += (int)a->a_numvals;
 	return(0);
 }
 
