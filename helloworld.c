@@ -101,6 +101,12 @@ typedef struct helloworld_t
 
 
 static int
+hello_count_entry(
+		Entry *						e,
+		helloworld_cnt_t *			cnt );
+
+
+static int
 hello_count_entry_attr(
 		Entry *						e,
 		int *						iptr,
@@ -123,12 +129,6 @@ hello_db_init(
 //hello_op_add(
 //		Operation *					op,
 //		SlapReply *					rs );
-
-
-static int
-hello_count_entry(
-		Entry *						e,
-		helloworld_cnt_t *			cnt );
 
 
 //static int
@@ -365,6 +365,24 @@ static ConfigOCs hello_cfg_ocs[] =
 #endif
 
 int
+hello_count_entry(
+		Entry *						e,
+		helloworld_cnt_t *			cnt )
+{
+	hello_count_entry_attr(e, &cnt->c_total,		ad_helloFamilySize);
+	hello_count_entry_attr(e, &cnt->c_grandparent,	ad_helloGrandparent);
+	hello_count_entry_attr(e, &cnt->c_parent,		ad_helloParent);
+	hello_count_entry_attr(e, &cnt->c_sibling,		ad_helloSibling);
+	hello_count_entry_attr(e, &cnt->c_spouse,		ad_helloSpouse);
+	hello_count_entry_attr(e, &cnt->c_child,		ad_helloChild);
+	hello_count_entry_attr(e, &cnt->c_grandchild,	ad_helloGrandchild);
+	hello_count_entry_attr(e, &cnt->c_godparent,	ad_helloGodparent);
+	hello_count_entry_attr(e, &cnt->c_godchild,		ad_helloGodchild);
+	return(0);
+}
+
+
+int
 hello_count_entry_attr(
 		Entry *						e,
 		int *						iptr,
@@ -426,24 +444,6 @@ hello_db_init(
 	// set default values
 	hw->hw_count_family		= 0;
 
-	return(0);
-}
-
-
-int
-hello_count_entry(
-		Entry *						e,
-		helloworld_cnt_t *			cnt )
-{
-	hello_count_entry_attr(e, &cnt->c_total,		ad_helloFamilySize);
-	hello_count_entry_attr(e, &cnt->c_grandparent,	ad_helloGrandparent);
-	hello_count_entry_attr(e, &cnt->c_parent,		ad_helloParent);
-	hello_count_entry_attr(e, &cnt->c_sibling,		ad_helloSibling);
-	hello_count_entry_attr(e, &cnt->c_spouse,		ad_helloSpouse);
-	hello_count_entry_attr(e, &cnt->c_child,		ad_helloChild);
-	hello_count_entry_attr(e, &cnt->c_grandchild,	ad_helloGrandchild);
-	hello_count_entry_attr(e, &cnt->c_godparent,	ad_helloGodparent);
-	hello_count_entry_attr(e, &cnt->c_godchild,		ad_helloGodchild);
 	return(0);
 }
 
