@@ -117,6 +117,13 @@ hello_db_init(
 //		SlapReply *					rs );
 
 
+static int
+hello_get_entry_counts_attr(
+		Entry *						e,
+		int *						iptr,
+		AttributeDescription *		ad );
+
+
 //static int
 //hello_op_modify(
 //		Operation *					op,
@@ -398,6 +405,20 @@ hello_db_init(
 	// set default values
 	hw->hw_count_family		= 0;
 
+	return(0);
+}
+
+
+int
+hello_get_entry_counts_attr(
+		Entry *						e,
+		int *						iptr,
+		AttributeDescription *		ad )
+{
+	Attribute * a;
+	if ((a = attr_find(e->e_attrs, ad)) == NULL)
+		return(0);
+	*iptr += (int)a->a_numvals;
 	return(0);
 }
 
