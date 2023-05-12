@@ -126,7 +126,7 @@ hello_db_init(
 
 
 static int
-hello_get_entry_counts(
+hello_count_entry(
 		Entry *						e,
 		helloworld_cnt_t *			cnt );
 
@@ -431,7 +431,7 @@ hello_db_init(
 
 
 int
-hello_get_entry_counts(
+hello_count_entry(
 		Entry *						e,
 		helloworld_cnt_t *			cnt )
 {
