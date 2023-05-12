@@ -410,7 +410,7 @@ helloworld_initialize( void )
 	helloworld.on_bi.bi_flags			= SLAPO_BFLAG_SINGLE;
 
 	helloworld.on_bi.bi_db_init			= hello_db_init;
-	//helloworld.on_bi.bi_db_open			= hello_db_open;
+	//helloworld.on_bi.bi_db_open		= hello_db_open;
 	//helloworld.on_bi.bi_db_close		= hello_db_close;
 	helloworld.on_bi.bi_db_destroy		= hello_db_destroy;
 
