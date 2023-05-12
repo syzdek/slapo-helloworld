@@ -136,10 +136,17 @@ hello_db_init(
 //		SlapReply *					rs );
 
 
-//static int
-//hello_op_modify(
-//		Operation *					op,
-//		SlapReply *					rs );
+static int
+hello_op_modify(
+		Operation *					op,
+		SlapReply *					rs );
+
+
+static int
+hello_op_modify_ad(
+		Modifications *				mods,
+		AttributeDescription *		ad,
+		int *						iptr );
 
 
 //static int
@@ -472,6 +479,144 @@ hello_db_init(
 
 
 int
+hello_op_modify(
+		Operation *					op,
+		SlapReply *					rs )
+{
+	int						rc;
+	int	*					iptr;
+	int						tally;
+	slap_overinst *			on;
+	helloworld_t *			hw;
+	helloworld_cnt_t		cnt;
+	Modifications **		next;
+	Modifications *         mods;
+	BackendInfo *			bd_info;
+	BerValue *				bv;
+	Entry *					entry;
+
+	// initialize state
+	on				= (slap_overinst *)op->o_bd->bd_info;
+	hw				= on->on_bi.bi_private;
+	memset(&cnt, 0, sizeof(helloworld_cnt_t));
+
+	// exit if family counting is disabled
+	if (!(hw->hw_count_family))
+		return(SLAP_CB_CONTINUE);
+
+	// retrieve entry from backend
+	bd_info				= op->o_bd->bd_info;
+	op->o_bd->bd_info	= (BackendInfo *)on->on_info;
+	rc					= be_entry_get_rw( op, &op->o_req_ndn, NULL, NULL, 0, &entry );
+	op->o_bd->bd_info	= (BackendInfo *)bd_info;
+	if ( rc != LDAP_SUCCESS )
+		return(SLAP_CB_CONTINUE);
+
+	// process data from entry
+	hello_count_entry(entry, &cnt);
+
+	// release entry
+	op->o_bd->bd_info = (BackendInfo *)on->on_info;
+	be_entry_release_r(op, entry);
+	op->o_bd->bd_info = (BackendInfo *)bd_info;
+
+	// loop through modifications and update counts
+	for(next = &op->orm_modlist; ((*next)); next = &(*next)->sml_next)
+	{
+		iptr = &cnt.c_grandparent;
+		if (!(hello_op_modify_ad(*next, ad_helloGrandparent, iptr)))
+			continue;
+
+		iptr = &cnt.c_parent;
+		if (!(hello_op_modify_ad(*next, ad_helloParent, iptr)))
+			continue;
+
+		iptr = &cnt.c_sibling;
+		if (!(hello_op_modify_ad(*next, ad_helloSibling, iptr)))
+			continue;
+
+		iptr = &cnt.c_spouse;
+		if (!(hello_op_modify_ad(*next, ad_helloSpouse, iptr)))
+			continue;
+
+		iptr = &cnt.c_child;
+		if (!(hello_op_modify_ad(*next, ad_helloChild, iptr)))
+			continue;
+
+		iptr = &cnt.c_grandchild;
+		if (!(hello_op_modify_ad(*next, ad_helloGrandchild, iptr)))
+			continue;
+
+		iptr = &cnt.c_godparent;
+		if (!(hello_op_modify_ad(*next, ad_helloGodchild, iptr)))
+			continue;
+
+		iptr = &cnt.c_godchild;
+		if (!(hello_op_modify_ad(*next, ad_helloGodparent, iptr)))
+			continue;
+	};
+
+	// determine if the family count has changed
+	if ((tally = hello_count_tally(&cnt)) == cnt.c_total)
+		return(SLAP_CB_CONTINUE);
+
+	// update helloFamilySize
+	mods  = (Modifications *) ch_malloc( sizeof( Modifications ) );
+	mods->sml_op				= LDAP_MOD_REPLACE;
+	mods->sml_flags				= SLAP_MOD_INTERNAL;
+	mods->sml_type.bv_val		= NULL;
+	mods->sml_desc				= ad_helloFamilySize;
+	mods->sml_numvals			= 1;
+	mods->sml_values			= ch_calloc(sizeof( struct berval ), 2);
+	mods->sml_values[0].bv_len	= snprintf(NULL, 0, "%i", tally);
+	mods->sml_values[0].bv_val	= ch_calloc(mods->sml_values[0].bv_len+1, 1);
+	bv							= &mods->sml_values[0];
+	snprintf(bv->bv_val, (bv->bv_len+1), "%i", tally);
+	mods->sml_values[1].bv_len	= 0;
+	mods->sml_values[1].bv_val	= NULL;
+	mods->sml_nvalues			= NULL;
+	mods->sml_next				= NULL;
+	*next						= mods;
+
+	return(((rs)) ? SLAP_CB_CONTINUE : SLAP_CB_CONTINUE);
+}
+
+
+int
+hello_op_modify_ad(
+		Modifications *				mods,
+		AttributeDescription *		ad,
+		int *						iptr )
+{
+	if (mods->sml_desc != ad)
+		return(-1);
+
+	switch(mods->sml_op)
+	{
+		case LDAP_MOD_DELETE:
+		if (mods->sml_numvals == 0)
+			*iptr = 0;
+		if (mods->sml_numvals > 0)
+			*iptr -= (int)mods->sml_numvals;
+		break;
+
+		case LDAP_MOD_ADD:
+		*iptr += (int)mods->sml_numvals;
+		break;
+
+		case LDAP_MOD_REPLACE:
+		*iptr = (int)mods->sml_numvals;
+		break;
+
+		default:
+		break;
+	};
+
+	return(0);
+}
+
+
+int
 helloworld_initialize( void )
 {
 	int		i;
@@ -518,7 +663,7 @@ helloworld_initialize( void )
 	//helloworld.on_bi.bi_op_bind		= hello_op_bind;
 	//helloworld.on_bi.bi_op_compare	= hello_op_compare;
 	//helloworld.on_bi.bi_op_delete		= hello_op_delete;
-	//helloworld.on_bi.bi_op_modify		= hello_op_modify;
+	helloworld.on_bi.bi_op_modify		= hello_op_modify;
 	//helloworld.on_bi.bi_op_search		= hello_op_search;
 
 	helloworld.on_bi.bi_cf_ocs			= hello_cfg_ocs;
