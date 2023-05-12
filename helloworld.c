@@ -52,6 +52,19 @@
 #	pragma mark - Datatypes
 #endif
 
+typedef struct helloworld_cnt_t
+{
+	int							c_grandparent;
+	int							c_parent;
+	int							c_sibling;
+	int							c_spouse;
+	int							c_child;
+	int							c_grandchild;
+	int							c_godparent;
+	int							c_godchild;
+} helloworld_cnt_t;
+
+
 typedef struct helloworld_at_t
 {
 	char *						def;
