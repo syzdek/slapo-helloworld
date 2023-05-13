@@ -528,25 +528,21 @@ hello_op_modify(
 		SlapReply *					rs )
 {
 	int						rc;
-	int	*					iptr;
 	int						tally;
+	size_t					len;
 	slap_overinst *			on;
 	helloworld_t *			hw;
 	helloworld_cnt_t		cnt;
 	Modifications **		next;
 	Modifications *         mods;
 	BackendInfo *			bd_info;
-	BerValue *				bv;
 	Entry *					entry;
+	char *					val;
 
 	// initialize state
 	on				= (slap_overinst *)op->o_bd->bd_info;
 	hw				= on->on_bi.bi_private;
 	memset(&cnt, 0, sizeof(helloworld_cnt_t));
-
-	// exit if family counting is disabled
-	if (!(hw->hw_count_family))
-		return(SLAP_CB_CONTINUE);
 
 	// retrieve entry from backend
 	bd_info				= op->o_bd->bd_info;
@@ -567,60 +563,47 @@ hello_op_modify(
 	// loop through modifications and update counts
 	for(next = &op->orm_modlist; ((*next)); next = &(*next)->sml_next)
 	{
-		iptr = &cnt.c_grandparent;
-		if (!(hello_op_modify_ad(*next, ad_helloGrandparent, iptr)))
+		if (!(hello_op_modify_ad(*next, ad_helloGrandparent, &cnt.c_grandparent)))
 			continue;
-
-		iptr = &cnt.c_parent;
-		if (!(hello_op_modify_ad(*next, ad_helloParent, iptr)))
+		if (!(hello_op_modify_ad(*next, ad_helloParent, &cnt.c_parent)))
 			continue;
-
-		iptr = &cnt.c_sibling;
-		if (!(hello_op_modify_ad(*next, ad_helloSibling, iptr)))
+		if (!(hello_op_modify_ad(*next, ad_helloSibling, &cnt.c_sibling)))
 			continue;
-
-		iptr = &cnt.c_spouse;
-		if (!(hello_op_modify_ad(*next, ad_helloSpouse, iptr)))
+		if (!(hello_op_modify_ad(*next, ad_helloSpouse, &cnt.c_spouse)))
 			continue;
-
-		iptr = &cnt.c_child;
-		if (!(hello_op_modify_ad(*next, ad_helloChild, iptr)))
+		if (!(hello_op_modify_ad(*next, ad_helloChild, &cnt.c_child)))
 			continue;
-
-		iptr = &cnt.c_grandchild;
-		if (!(hello_op_modify_ad(*next, ad_helloGrandchild, iptr)))
+		if (!(hello_op_modify_ad(*next, ad_helloGrandchild, &cnt.c_grandchild)))
 			continue;
-
-		iptr = &cnt.c_godparent;
-		if (!(hello_op_modify_ad(*next, ad_helloGodchild, iptr)))
+		if (!(hello_op_modify_ad(*next, ad_helloGodchild, &cnt.c_godchild)))
 			continue;
-
-		iptr = &cnt.c_godchild;
-		if (!(hello_op_modify_ad(*next, ad_helloGodparent, iptr)))
+		if (!(hello_op_modify_ad(*next, ad_helloGodparent, &cnt.c_godparent)))
 			continue;
 	};
 
-	// determine if the family count has changed
-	if ((tally = hello_count_tally(&cnt)) == cnt.c_total)
-		return(SLAP_CB_CONTINUE);
-
-	// update helloFamilySize
-	mods  = (Modifications *) ch_malloc( sizeof( Modifications ) );
-	mods->sml_op				= LDAP_MOD_REPLACE;
-	mods->sml_flags				= SLAP_MOD_INTERNAL;
-	mods->sml_type.bv_val		= NULL;
-	mods->sml_desc				= ad_helloFamilySize;
-	mods->sml_numvals			= 1;
-	mods->sml_values			= ch_calloc(sizeof( struct berval ), 2);
-	mods->sml_values[0].bv_len	= snprintf(NULL, 0, "%i", tally);
-	mods->sml_values[0].bv_val	= ch_calloc(mods->sml_values[0].bv_len+1, 1);
-	bv							= &mods->sml_values[0];
-	snprintf(bv->bv_val, (bv->bv_len+1), "%i", tally);
-	mods->sml_values[1].bv_len	= 0;
-	mods->sml_values[1].bv_val	= NULL;
-	mods->sml_nvalues			= NULL;
-	mods->sml_next				= NULL;
-	*next						= mods;
+	// update helloFamilySize if family count is enabled and size has changed
+	tally = hello_count_tally(&cnt);
+	if ( (tally != cnt.c_total) && ((hw->hw_count_family)) )
+	{
+		// create modification for helloFamilySize
+		mods  = (Modifications *) ch_malloc( sizeof( Modifications ) );
+		mods->sml_op				= LDAP_MOD_REPLACE;
+		mods->sml_flags				= SLAP_MOD_INTERNAL;
+		mods->sml_type.bv_val		= NULL;
+		mods->sml_desc				= ad_helloFamilySize;
+		mods->sml_numvals			= 1;
+		mods->sml_values			= ch_calloc(sizeof( struct berval ), 2);
+		len							= snprintf(NULL, 0, "%i", tally);
+		val							= ch_calloc((len+1), 1);
+		snprintf(val, (len+1), "%i", tally);
+		mods->sml_values[0].bv_len	= len;
+		mods->sml_values[0].bv_val	= val;
+		mods->sml_values[1].bv_len	= 0;
+		mods->sml_values[1].bv_val	= NULL;
+		mods->sml_nvalues			= NULL;
+		mods->sml_next				= NULL;
+		*next						= mods;
+	};
 
 	return(((rs)) ? SLAP_CB_CONTINUE : SLAP_CB_CONTINUE);
 }
