@@ -185,6 +185,7 @@ static slap_overinst				helloworld;
 
 // operational attribute descriptions
 static AttributeDescription *		ad_helloBestFriend			= NULL;
+static AttributeDescription *		ad_helloBestFriendOf		= NULL;
 static AttributeDescription *		ad_helloFamilySize			= NULL;
 
 // user attribute descriptions
@@ -210,9 +211,17 @@ static helloworld_at_t hello_ats[] =
 				" DESC 'The subentry of the users best friend'"
 				" EQUALITY distinguishedNameMatch"
 				" SYNTAX 1.3.6.1.4.1.1466.115.121.1.12"
-				" SINGLE-VALUE "
-				" USAGE directoryOperation )",
+				" SINGLE-VALUE )",
 		.ad		= &ad_helloBestFriend
+	},
+	{	.def	= "( 1.3.6.1.4.1.27893.4.3.1.2"
+				" NAME ( 'helloBestFriendOf' )"
+				" DESC 'The subentry of the users best friend'"
+				" EQUALITY distinguishedNameMatch"
+				" SYNTAX 1.3.6.1.4.1.1466.115.121.1.12"
+				" NO-USER-MODIFICATION"
+				" USAGE directoryOperation )",
+		.ad		= &ad_helloBestFriendOf
 	},
 	{	.def	= "( 1.3.6.1.4.1.27893.4.3.1.3"
 				" NAME ( 'helloFamilySize' )"
