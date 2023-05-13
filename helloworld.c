@@ -137,6 +137,12 @@ hello_db_init(
 
 
 static int
+hello_op_add(
+		Operation *					op,
+		SlapReply *					rs );
+
+
+static int
 hello_op_modify(
 		Operation *					op,
 		SlapReply *					rs );
@@ -479,6 +485,44 @@ hello_db_init(
 
 
 int
+hello_op_add(
+		Operation *					op,
+		SlapReply *					rs )
+{
+	slap_overinst *			on;
+	helloworld_t *			hw;
+	helloworld_cnt_t		cnt;
+	Entry *					entry;
+	struct berval			bv;
+	char					buff[32];
+
+	// initialize state
+	on				= (slap_overinst *)op->o_bd->bd_info;
+	hw				= on->on_bi.bi_private;
+	entry			= op->ora_e;
+	memset(&cnt, 0, sizeof(helloworld_cnt_t));
+
+	// exit if family counting is disabled
+	if (!(hw->hw_count_family))
+		return(SLAP_CB_CONTINUE);
+
+	// process data from entry
+	hello_count_entry(entry, &cnt);
+
+	// add helloFamilySize to entry
+	snprintf(buff, sizeof(buff), "%i", hello_count_tally(&cnt));
+	buff[sizeof(buff)-1]	= '\0';
+	bv.bv_val				= buff;
+	bv.bv_len				= strlen(buff);
+	attr_merge_one(entry, ad_helloFamilySize, &bv, &bv);
+
+	if (!(rs))
+		return(SLAP_CB_CONTINUE);
+	return(SLAP_CB_CONTINUE);
+}
+
+
+int
 hello_op_modify(
 		Operation *					op,
 		SlapReply *					rs )
@@ -659,7 +703,7 @@ helloworld_initialize( void )
 	//helloworld.on_bi.bi_db_close		= hello_db_close;
 	helloworld.on_bi.bi_db_destroy		= hello_db_destroy;
 
-	//helloworld.on_bi.bi_op_add		= hello_op_add;
+	helloworld.on_bi.bi_op_add			= hello_op_add;
 	//helloworld.on_bi.bi_op_bind		= hello_op_bind;
 	//helloworld.on_bi.bi_op_compare	= hello_op_compare;
 	//helloworld.on_bi.bi_op_delete		= hello_op_delete;
