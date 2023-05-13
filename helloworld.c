@@ -466,8 +466,8 @@ hello_db_init(
 		// do not allow slapo-pwdshadow to be global
 		if ((cr))
 		{
-			snprintf( cr->msg, sizeof(cr->msg), "slapo-helloworld cannot be global" );
-			Debug( LDAP_DEBUG_ANY, "%s\n", cr->msg );
+			snprintf(cr->msg, sizeof(cr->msg), "slapo-helloworld cannot be global");
+			Debug(LDAP_DEBUG_ANY, "%s\n", cr->msg);
 		};
 		return(1);
 	};
@@ -547,9 +547,9 @@ hello_op_modify(
 	// retrieve entry from backend
 	bd_info				= op->o_bd->bd_info;
 	op->o_bd->bd_info	= (BackendInfo *)on->on_info;
-	rc					= be_entry_get_rw( op, &op->o_req_ndn, NULL, NULL, 0, &entry );
+	rc					= be_entry_get_rw(op, &op->o_req_ndn, NULL, NULL, 0, &entry);
 	op->o_bd->bd_info	= (BackendInfo *)bd_info;
-	if ( rc != LDAP_SUCCESS )
+	if (rc != LDAP_SUCCESS)
 		return(SLAP_CB_CONTINUE);
 
 	// process data from entry
@@ -586,13 +586,13 @@ hello_op_modify(
 	if ( (tally != cnt.c_total) && ((hw->hw_count_family)) )
 	{
 		// create modification for helloFamilySize
-		mods  = (Modifications *) ch_malloc( sizeof( Modifications ) );
+		mods  = (Modifications *) ch_malloc(sizeof(Modifications));
 		mods->sml_op				= LDAP_MOD_REPLACE;
 		mods->sml_flags				= SLAP_MOD_INTERNAL;
 		mods->sml_type.bv_val		= NULL;
 		mods->sml_desc				= ad_helloFamilySize;
 		mods->sml_numvals			= 1;
-		mods->sml_values			= ch_calloc(sizeof( struct berval ), 2);
+		mods->sml_values			= ch_calloc(sizeof(struct berval), 2);
 		len							= snprintf(NULL, 0, "%i", tally);
 		val							= ch_calloc((len+1), 1);
 		snprintf(val, (len+1), "%i", tally);
@@ -706,10 +706,10 @@ init_module(
 		char *						argv[] )
 {
 	if ((argc))
-		return( helloworld_initialize() );
+		return(helloworld_initialize());
 	if ((argv))
-		return( helloworld_initialize() );
-	return( helloworld_initialize() );
+		return(helloworld_initialize());
+	return(helloworld_initialize());
 }
 #endif
 
