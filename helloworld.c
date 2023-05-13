@@ -214,7 +214,7 @@ static helloworld_at_t hello_ats[] =
 				" USAGE directoryOperation )",
 		.ad		= &ad_helloBestFriend
 	},
-	{	.def	= "( 1.3.6.1.4.1.27893.4.3.1.2"
+	{	.def	= "( 1.3.6.1.4.1.27893.4.3.1.3"
 				" NAME ( 'helloFamilySize' )"
 				" DESC 'The number of individuals in the users family'"
 				" EQUALITY integerMatch"
