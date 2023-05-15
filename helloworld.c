@@ -371,7 +371,7 @@ static ConfigTable hello_cfg_ats[] =
 
 
 // configuration objectclass definitions
-static ConfigOCs hello_cfg_ocs[] =
+static ConfigOCs hello_cf_ocs[] =
 {
 	{	.co_def		= "( 1.3.6.1.4.1.27893.4.3.5.1"
 					" NAME 'olcHelloWorldConfig'"
@@ -741,7 +741,7 @@ helloworld_initialize( void )
 	};
 
 	// register configuration options/attributes
-	if ((code = config_register_schema(hello_cfg_ats, hello_cfg_ocs)) != 0)
+	if ((code = config_register_schema(hello_cfg_ats, hello_cf_ocs)) != 0)
 	{
 		Debug(LDAP_DEBUG_ANY, "helloworld_initialize: config_register_schema failed\n");
 		return(code);
@@ -766,7 +766,7 @@ helloworld_initialize( void )
 	helloworld.on_bi.bi_op_modrdn		= hello_op_modrdn;
 	helloworld.on_bi.bi_op_search		= hello_op_search;
 
-	helloworld.on_bi.bi_cf_ocs			= hello_cfg_ocs;
+	helloworld.on_bi.bi_cf_ocs			= hello_cf_ocs;
 
 	return(overlay_register(&helloworld));
 }
