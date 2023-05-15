@@ -130,12 +130,6 @@ hello_db_init(
 		ConfigReply *				cr );
 
 
-//static int
-//hello_op_add(
-//		Operation *					op,
-//		SlapReply *					rs );
-
-
 static int
 hello_op_add(
 		Operation *					op,
