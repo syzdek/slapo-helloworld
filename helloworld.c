@@ -131,6 +131,12 @@ hello_db_init(
 
 
 static int
+hello_db_open(
+		BackendDB *					be,
+		ConfigReply *				cr );
+
+
+static int
 hello_op_add(
 		Operation *					op,
 		SlapReply *					rs );
@@ -554,6 +560,27 @@ hello_db_init(
 
 
 int
+hello_db_open(
+		BackendDB *					be,
+		ConfigReply *				cr )
+{
+	slap_overinst *			on;
+	helloworld_t *			hw;
+
+	Debug(LDAP_DEBUG_TRACE, "==> hello_db_open\n");
+
+	on						= (slap_overinst *)be->bd_info;
+	hw						= on->on_bi.bi_private;
+
+	Debug(LDAP_DEBUG_CONFIG, "hw_count_family:    %i\n", hw->hw_count_family);
+
+	if ((cr))
+		return(0);
+	return(0);
+}
+
+
+int
 hello_op_add(
 		Operation *					op,
 		SlapReply *					rs )
@@ -806,7 +833,7 @@ helloworld_initialize( void )
 
 	helloworld.on_bi.bi_db_init			= hello_db_init;
 	//helloworld.on_bi.bi_db_config		= hello_db_config;
-	//helloworld.on_bi.bi_db_open		= hello_db_open;
+	helloworld.on_bi.bi_db_open			= hello_db_open;
 	//helloworld.on_bi.bi_db_close		= hello_db_close;
 	helloworld.on_bi.bi_db_destroy		= hello_db_destroy;
 
