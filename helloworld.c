@@ -143,6 +143,12 @@ hello_op_add(
 
 
 static int
+hello_op_delete(
+		Operation *					op,
+		SlapReply *					rs );
+
+
+static int
 hello_op_modify(
 		Operation *					op,
 		SlapReply *					rs );
@@ -532,6 +538,24 @@ hello_op_add(
 
 
 int
+hello_op_delete(
+		Operation *					op,
+		SlapReply *					rs )
+{
+	slap_overinst *			on;
+	helloworld_t *			hw;
+
+	// initialize state
+	on				= (slap_overinst *)op->o_bd->bd_info;
+	hw				= on->on_bi.bi_private;
+
+	if ( (!(rs)) || (!(hw)) )
+		return(SLAP_CB_CONTINUE);
+	return(SLAP_CB_CONTINUE);
+}
+
+
+int
 hello_op_modify(
 		Operation *					op,
 		SlapReply *					rs )
@@ -698,7 +722,7 @@ helloworld_initialize( void )
 	helloworld.on_bi.bi_op_add			= hello_op_add;
 	//helloworld.on_bi.bi_op_bind		= hello_op_bind;
 	//helloworld.on_bi.bi_op_compare	= hello_op_compare;
-	//helloworld.on_bi.bi_op_delete		= hello_op_delete;
+	helloworld.on_bi.bi_op_delete		= hello_op_delete;
 	helloworld.on_bi.bi_op_modify		= hello_op_modify;
 	//helloworld.on_bi.bi_op_search		= hello_op_search;
 
