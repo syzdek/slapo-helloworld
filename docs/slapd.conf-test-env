@@ -66,6 +66,7 @@ rootpw			"drowssap"
 directory		/tmp/slapo-helloworld/var/openldap-data
 overlay			helloworld
 hello_count_family	on
+hello_example_dn	"ou=Groups,dc=example,dc=com"
 index	default		eq,pres
 index	objectClass	eq
 index	uid		eq,pres,sub
