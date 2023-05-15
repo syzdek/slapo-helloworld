@@ -342,7 +342,7 @@ static helloworld_oc_t hello_ocs[] =
 
 
 // configuration options and attribute definitions
-static ConfigTable hello_cfg_ats[] =
+static ConfigTable hello_cf_ats[] =
 {
 	{	.name		= "hello_count_family",
 		.what		= "on|off",
@@ -379,7 +379,7 @@ static ConfigOCs hello_cf_ocs[] =
 					" SUP olcOverlayConfig"
 					" MAY ( olcHelloCountFamily ) )",
 		.co_type	= Cft_Overlay,
-		.co_table	= hello_cfg_ats
+		.co_table	= hello_cf_ats
 	},
 	{	.co_def		= NULL,
 		.co_type	= 0,
@@ -741,7 +741,7 @@ helloworld_initialize( void )
 	};
 
 	// register configuration options/attributes
-	if ((code = config_register_schema(hello_cfg_ats, hello_cf_ocs)) != 0)
+	if ((code = config_register_schema(hello_cf_ats, hello_cf_ocs)) != 0)
 	{
 		Debug(LDAP_DEBUG_ANY, "helloworld_initialize: config_register_schema failed\n");
 		return(code);
