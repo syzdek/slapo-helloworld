@@ -95,9 +95,9 @@ typedef struct helloworld_t
 #	pragma mark - Prototypes
 #endif
 
-//static int
-//hello_cfg_gen(
-//		ConfigArgs *				c );
+static int
+hello_cf_gen(
+		ConfigArgs *				c );
 
 
 static int
@@ -396,6 +396,60 @@ static ConfigOCs hello_cf_ocs[] =
 #ifndef SLAPD_OVER_HELLOWORLD
 #	pragma mark - Functions
 #endif
+
+int
+hello_cf_gen(
+		ConfigArgs *				c )
+{
+	slap_overinst *			on;
+	helloworld_t *			hw;
+
+	on						= (slap_overinst *)c->bi;
+	hw						= on->on_bi.bi_private;
+
+	Debug(LDAP_DEBUG_TRACE, "==> hello_cf_gen\n");
+
+	switch (c->op)
+	{
+		// SLAP_CONFIG_EMIT
+		case SLAP_CONFIG_EMIT:
+		switch(c->type)
+		{
+			default:
+			break;
+		};
+		Debug(LDAP_DEBUG_ANY, "hello_cf_gen: unknown configuration option\n");
+		return(ARG_BAD_CONF);
+
+		// LDAP_MOD_DELETE
+		case LDAP_MOD_DELETE:
+		switch(c->type)
+		{
+			default:
+			break;
+		};
+		Debug(LDAP_DEBUG_ANY, "hello_cf_gen: unknown configuration option\n");
+		return(ARG_BAD_CONF);
+
+		// SLAP_CONFIG_ADD/LDAP_MOD_ADD
+		case SLAP_CONFIG_ADD: // fallthru to LDAP_MOD_ADD
+		case LDAP_MOD_ADD:
+		switch( c->type )
+		{
+			default:
+			break;
+		};
+		Debug(LDAP_DEBUG_ANY, "hello_cf_gen: unknown configuration option\n");
+		return(ARG_BAD_CONF);
+
+		default:
+		break;
+	};
+
+	Debug(LDAP_DEBUG_ANY, "hello_cf_gen: unknown configuration operation\n");
+	return(ARG_BAD_CONF);
+}
+
 
 int
 hello_count_entry(
