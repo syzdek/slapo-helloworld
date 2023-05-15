@@ -751,12 +751,15 @@ helloworld_initialize( void )
 	helloworld.on_bi.bi_flags			= SLAPO_BFLAG_SINGLE;
 
 	helloworld.on_bi.bi_db_init			= hello_db_init;
+	//helloworld.on_bi.bi_db_config		= hello_db_config;
 	//helloworld.on_bi.bi_db_open		= hello_db_open;
 	//helloworld.on_bi.bi_db_close		= hello_db_close;
 	helloworld.on_bi.bi_db_destroy		= hello_db_destroy;
 
+	//helloworld.on_bi.bi_op_abandon	= hello_op_abandon;
 	helloworld.on_bi.bi_op_add			= hello_op_add;
 	//helloworld.on_bi.bi_op_bind		= hello_op_bind;
+	//helloworld.on_bi.bi_op_unbind		= hello_op_unbind;
 	//helloworld.on_bi.bi_op_compare	= hello_op_compare;
 	helloworld.on_bi.bi_op_delete		= hello_op_delete;
 	helloworld.on_bi.bi_op_modify		= hello_op_modify;
