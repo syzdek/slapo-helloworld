@@ -553,7 +553,7 @@ hello_db_init(
 	hw						= on->on_bi.bi_private;
 
 	// set default values
-	hw->hw_count_family		= 0;
+	hw->hw_count_family			= 0;
 
 	return(0);
 }
