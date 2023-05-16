@@ -44,9 +44,11 @@
 
 #define HELLO_CFG_EXAMPLE_DN		0x01
 #define HELLO_CFG_EXAMPLE_DNATTR	0x02
+#define HELLO_CFG_EXAMPLE_INT		0x03
 
 #define HELLO_DFLT_EXAMPLE_DN		"ou=People,dc=example,dc=net"
 #define HELLO_DFLT_EXAMPLE_DNATTR	ad_helloBestFriend
+#define HELLO_DFLT_EXAMPLE_INT		42
 
 
 /////////////////
@@ -89,6 +91,7 @@ typedef struct helloworld_oc_t
 typedef struct helloworld_t
 {
 	int							hw_count_family;
+	int							hw_example_int;
 	AttributeDescription *		hw_example_dn_attr;
 	struct berval				hw_example_dn;
 } helloworld_t;
@@ -400,6 +403,20 @@ static ConfigTable hello_cf_ats[] =
 					" SYNTAX OMsDirectoryString"
 					" SINGLE-VALUE )"
 	},
+	{	.name		= "hello_example_int",
+		.what		= "<integer>",
+		.min_args	= 2,
+		.max_args	= 2,
+		.length		= 0,
+		.arg_type	= ARG_INT|ARG_MAGIC|HELLO_CFG_EXAMPLE_INT,
+		.arg_item	= hello_cf_gen,
+		.attribute	= "( 1.3.6.1.4.1.27893.4.3.4.103"
+					" NAME 'olcHelloExampleInt'"
+					" DESC 'Example processing of integer in slapd.conf'"
+					" EQUALITY caseIgnoreMatch"
+					" SYNTAX OMsDirectoryString"
+					" SINGLE-VALUE )"
+	},
 	{	.name		= NULL,
 		.what		= NULL,
 		.min_args	= 0,
@@ -420,7 +437,7 @@ static ConfigOCs hello_cf_ocs[] =
 					" DESC 'Hello World configuration'"
 					" SUP olcOverlayConfig"
 					" MAY ( olcHelloCountFamily $ olcHelloExampleDN $"
-						" olcHelloExampleDnAttr ) )",
+						" olcHelloExampleDnAttr $ olcHelloExampleInt ) )",
 		.co_type	= Cft_Overlay,
 		.co_table	= hello_cf_ats
 	},
@@ -448,6 +465,8 @@ hello_cf_gen(
 	slap_overinst *			on;
 	helloworld_t *			hw;
 	AttributeDescription *	ad;
+	struct berval 			bv;
+	char					val[128];
 
 	on						= (slap_overinst *)c->bi;
 	hw						= on->on_bi.bi_private;
@@ -474,6 +493,12 @@ hello_cf_gen(
 			};
 			return(0);
 
+			case HELLO_CFG_EXAMPLE_INT:
+			snprintf(val, sizeof(val), "%i", hw->hw_example_int);
+			bv.bv_val = val;
+			bv.bv_len = strlen(bv.bv_val);
+			return(0);
+
 			default:
 			break;
 		};
@@ -494,6 +519,10 @@ hello_cf_gen(
 				ber_memfree(hw->hw_example_dn.bv_val);
 			hw->hw_example_dn.bv_val = ch_strdup(HELLO_DFLT_EXAMPLE_DN);
 			hw->hw_example_dn.bv_len = strlen(HELLO_DFLT_EXAMPLE_DN);
+			return(0);
+
+			case HELLO_CFG_EXAMPLE_INT:
+			hw->hw_example_int = HELLO_DFLT_EXAMPLE_INT;
 			return(0);
 
 			default:
@@ -530,6 +559,11 @@ hello_cf_gen(
 			ber_memfree(c->value_dn.bv_val);
 			BER_BVZERO(&c->value_dn);
 			BER_BVZERO(&c->value_ndn);
+			return(0);
+
+			case HELLO_CFG_EXAMPLE_INT:
+			Debug(LDAP_DEBUG_TRACE, "==> hello_cf_gen add EXAMPLE_INT\n");
+			hw->hw_example_int = c->value_int;
 			return(0);
 
 			default:
@@ -647,6 +681,7 @@ hello_db_init(
 	hw->hw_example_dn_attr		= HELLO_DFLT_EXAMPLE_DNATTR;
 	hw->hw_example_dn.bv_val	= ch_strdup(HELLO_DFLT_EXAMPLE_DN);
 	hw->hw_example_dn.bv_len	= strlen(HELLO_DFLT_EXAMPLE_DN);
+	hw->hw_example_int			= HELLO_DFLT_EXAMPLE_INT;
 
 	return(0);
 }
@@ -668,6 +703,7 @@ hello_db_open(
 	Debug(LDAP_DEBUG_CONFIG, "hw_count_family:    %i\n", hw->hw_count_family);
 	Debug(LDAP_DEBUG_CONFIG, "hw_example_dn:      %s\n", hw->hw_example_dn.bv_val);
 	Debug(LDAP_DEBUG_CONFIG, "hw_example_dn_attr: %s\n", hw->hw_example_dn_attr->ad_type->sat_cname.bv_val);
+	Debug(LDAP_DEBUG_CONFIG, "hw_example_int:     %i\n", hw->hw_example_int);
 
 	if ((cr))
 		return(0);

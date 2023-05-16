@@ -68,6 +68,7 @@ overlay			helloworld
 hello_count_family	on
 hello_example_dn	"ou=Groups,dc=example,dc=com"
 hello_example_dn_attr	helloBestFriendOf
+hello_example_int	1234
 index	default		eq,pres
 index	objectClass	eq
 index	uid		eq,pres,sub
