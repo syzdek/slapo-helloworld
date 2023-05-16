@@ -700,10 +700,10 @@ hello_db_open(
 	on						= (slap_overinst *)be->bd_info;
 	hw						= on->on_bi.bi_private;
 
-	Debug(LDAP_DEBUG_CONFIG, "hw_count_family:    %i\n", hw->hw_count_family);
-	Debug(LDAP_DEBUG_CONFIG, "hw_example_dn:      %s\n", hw->hw_example_dn.bv_val);
-	Debug(LDAP_DEBUG_CONFIG, "hw_example_dn_attr: %s\n", hw->hw_example_dn_attr->ad_type->sat_cname.bv_val);
-	Debug(LDAP_DEBUG_CONFIG, "hw_example_int:     %i\n", hw->hw_example_int);
+	Debug(LDAP_DEBUG_CONFIG, "hello_count_family:    %i\n", hw->hw_count_family);
+	Debug(LDAP_DEBUG_CONFIG, "hello_example_dn:      %s\n", hw->hw_example_dn.bv_val);
+	Debug(LDAP_DEBUG_CONFIG, "hello_example_dn_attr: %s\n", hw->hw_example_dn_attr->ad_type->sat_cname.bv_val);
+	Debug(LDAP_DEBUG_CONFIG, "hello_example_int:     %i\n", hw->hw_example_int);
 
 	if ((cr))
 		return(0);
