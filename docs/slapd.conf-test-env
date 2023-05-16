@@ -69,6 +69,7 @@ hello_count_family	on
 hello_example_dn	"ou=Groups,dc=example,dc=com"
 hello_example_dn_attr	helloBestFriendOf
 hello_example_int	1234
+hello_example_str	"Salve Mundo"
 index	default		eq,pres
 index	objectClass	eq
 index	uid		eq,pres,sub
