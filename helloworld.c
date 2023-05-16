@@ -43,8 +43,10 @@
 #endif
 
 #define HELLO_CFG_EXAMPLE_DN		0x01
+#define HELLO_CFG_EXAMPLE_DNATTR	0x02
 
 #define HELLO_DFLT_EXAMPLE_DN		"ou=People,dc=example,dc=net"
+#define HELLO_DFLT_EXAMPLE_DNATTR	ad_helloBestFriend
 
 
 /////////////////
@@ -87,6 +89,7 @@ typedef struct helloworld_oc_t
 typedef struct helloworld_t
 {
 	int							hw_count_family;
+	AttributeDescription *		hw_example_dn_attr;
 	struct berval				hw_example_dn;
 } helloworld_t;
 
@@ -383,6 +386,20 @@ static ConfigTable hello_cf_ats[] =
 					" SYNTAX OMsDN"
 					" SINGLE-VALUE )"
 	},
+	{	.name		= "hello_example_dn_attr",
+		.what		= "<attribute>",
+		.min_args	= 2,
+		.max_args	= 2,
+		.length		= 0,
+		.arg_type	= ARG_ATDESC|ARG_MAGIC|HELLO_CFG_EXAMPLE_DNATTR,
+		.arg_item	= hello_cf_gen,
+		.attribute	= "( 1.3.6.1.4.1.27893.4.3.4.102"
+					" NAME 'olcHelloExampleDnAttr'"
+					" DESC 'Example processing of attribute in slapd.conf'"
+					" EQUALITY caseIgnoreMatch"
+					" SYNTAX OMsDirectoryString"
+					" SINGLE-VALUE )"
+	},
 	{	.name		= NULL,
 		.what		= NULL,
 		.min_args	= 0,
@@ -402,7 +419,8 @@ static ConfigOCs hello_cf_ocs[] =
 					" NAME 'olcHelloWorldConfig'"
 					" DESC 'Hello World configuration'"
 					" SUP olcOverlayConfig"
-					" MAY ( olcHelloCountFamily $ olcHelloExampleDN ) )",
+					" MAY ( olcHelloCountFamily $ olcHelloExampleDN $"
+						" olcHelloExampleDnAttr ) )",
 		.co_type	= Cft_Overlay,
 		.co_table	= hello_cf_ats
 	},
@@ -429,6 +447,7 @@ hello_cf_gen(
 	int						rc;
 	slap_overinst *			on;
 	helloworld_t *			hw;
+	AttributeDescription *	ad;
 
 	on						= (slap_overinst *)c->bi;
 	hw						= on->on_bi.bi_private;
@@ -441,6 +460,10 @@ hello_cf_gen(
 		case SLAP_CONFIG_EMIT:
 		switch(c->type)
 		{
+			case HELLO_CFG_EXAMPLE_DNATTR:
+			c->value_ad = hw->hw_example_dn_attr;
+			return(0);
+
 			case HELLO_CFG_EXAMPLE_DN:
 			Debug(LDAP_DEBUG_TRACE, "==> hello_cf_gen add EXAMPLE_DN\n");
 			if (hw->hw_example_dn.bv_val != NULL)
@@ -461,6 +484,10 @@ hello_cf_gen(
 		case LDAP_MOD_DELETE:
 		switch(c->type)
 		{
+			case HELLO_CFG_EXAMPLE_DNATTR:
+			hw->hw_example_dn_attr = HELLO_DFLT_EXAMPLE_DNATTR;
+			return(0);
+
 			case HELLO_CFG_EXAMPLE_DN:
 			Debug(LDAP_DEBUG_TRACE, "==> hello_cf_gen del EXAMPLE_DN\n");
 			if (hw->hw_example_dn.bv_val != NULL)
@@ -480,6 +507,21 @@ hello_cf_gen(
 		case LDAP_MOD_ADD:
 		switch( c->type )
 		{
+			case HELLO_CFG_EXAMPLE_DNATTR:
+			ad = c->value_ad;
+			if (!(is_at_syntax(ad->ad_type, SLAPD_DN_SYNTAX)))
+			{
+				snprintf( c->cr_msg,
+					sizeof( c->cr_msg ),
+					"hello_example_dn_attr attribute=\"%s\" must have DN (%s) syntax",
+					c->argv[1],
+					SLAPD_DN_SYNTAX );
+				Debug(LDAP_DEBUG_CONFIG, "%s: %s.\n", c->log, c->cr_msg);
+				return(ARG_BAD_CONF);
+			};
+			hw->hw_example_dn_attr = ad;
+			return(0);
+
 			case HELLO_CFG_EXAMPLE_DN:
 			Debug(LDAP_DEBUG_TRACE, "==> hello_cf_gen add EXAMPLE_DN\n");
 			if (hw->hw_example_dn.bv_val != NULL)
@@ -602,6 +644,7 @@ hello_db_init(
 
 	// set default values
 	hw->hw_count_family			= 0;
+	hw->hw_example_dn_attr		= HELLO_DFLT_EXAMPLE_DNATTR;
 	hw->hw_example_dn.bv_val	= ch_strdup(HELLO_DFLT_EXAMPLE_DN);
 	hw->hw_example_dn.bv_len	= strlen(HELLO_DFLT_EXAMPLE_DN);
 
@@ -624,6 +667,7 @@ hello_db_open(
 
 	Debug(LDAP_DEBUG_CONFIG, "hw_count_family:    %i\n", hw->hw_count_family);
 	Debug(LDAP_DEBUG_CONFIG, "hw_example_dn:      %s\n", hw->hw_example_dn.bv_val);
+	Debug(LDAP_DEBUG_CONFIG, "hw_example_dn_attr: %s\n", hw->hw_example_dn_attr->ad_type->sat_cname.bv_val);
 
 	if ((cr))
 		return(0);

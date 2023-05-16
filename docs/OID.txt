@@ -51,6 +51,7 @@ This project defines the following OIDs:
    1.3.6.1.4.1.27893.4.3.4    - OpenLDAP configuration AttributeTypes
    1.3.6.1.4.1.27893.4.3.4.1    - olcHelloCountFamily  (hello_count_family)
    1.3.6.1.4.1.27893.4.3.4.101  - olcHelloExampleDN    (hello_example_dn)
+   1.3.6.1.4.1.27893.4.3.4.102  - olcHelloExampleDnAttr  (hello_example_dn_attr)
    1.3.6.1.4.1.27893.4.3.5    - OpenLDAP configuration ObjectClasses
    1.3.6.1.4.1.27893.4.3.5.1    - olcHelloWorldConfig
 
