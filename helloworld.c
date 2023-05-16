@@ -413,8 +413,9 @@ static ConfigTable hello_cf_ats[] =
 		.attribute	= "( 1.3.6.1.4.1.27893.4.3.4.103"
 					" NAME 'olcHelloExampleInt'"
 					" DESC 'Example processing of integer in slapd.conf'"
-					" EQUALITY caseIgnoreMatch"
-					" SYNTAX OMsDirectoryString"
+					" EQUALITY integerMatch"
+					" ORDERING integerOrderingMatch"
+					" SYNTAX OMsInteger"
 					" SINGLE-VALUE )"
 	},
 	{	.name		= NULL,
